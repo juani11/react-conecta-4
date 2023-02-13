@@ -1,6 +1,11 @@
 import "./App.css";
 import { useState } from "react";
-import { thereIsAWinner } from "./logic/general";
+
+import {
+    numberOfColumns,
+    findRowIndexOfNextCircleInColumn,
+    thereIsAWinner,
+} from "./logic/general";
 const TURNS_COLORS = {
     1: "yellow",
     2: "green",
@@ -25,14 +30,14 @@ const boardInitialState = [
 ];
 
 const arrayBoard = [];
-const numberOfColumns = 7;
-const numberOfRows = 6;
+
 for (let i = 0; i < numberOfColumns; i++) {
     arrayBoard[i] = Array(6).fill(null);
 }
 
 console.log({ boardInitialState });
 console.log({ arrayBoard });
+
 function App() {
     const [board, setBoard] = useState(arrayBoard);
 
@@ -45,23 +50,19 @@ function App() {
         //Buscar en el board dentro de la columna que se hace hover, cual es el primer item != null
         const column = board[circleIndexColumn];
 
-        const rowIndexOfNextCircleInColumn = column.findIndex(
-            (circle) => circle == null
-        );
+        const rowIndexOfNextCircleInColumn =
+            findRowIndexOfNextCircleInColumn(column);
 
-        const reverseRowIndex =
-            column.length - rowIndexOfNextCircleInColumn - 1;
-
-        setNextCircleIndex([circleIndexColumn, reverseRowIndex]);
+        setNextCircleIndex([circleIndexColumn, rowIndexOfNextCircleInColumn]);
     };
 
-    const handleClickCircle = (circleIndexColumn, indexRow) => {
+    const handleClickCircle = (circleIndexColumn) => {
         // Buscar en el board dentro de la columna que se hace click, cual es el primer item != null
+
         const column = board[circleIndexColumn];
 
-        const rowIndexOfNextCircleInColumn = column.findIndex(
-            (circle) => circle == null
-        );
+        const rowIndexOfNextCircleInColumn =
+            findRowIndexOfNextCircleInColumn(column);
 
         const newBoardColumn = [...board[circleIndexColumn]];
         newBoardColumn[rowIndexOfNextCircleInColumn] = turn;
@@ -90,37 +91,32 @@ function App() {
                     {board.map((column, indexColumn) => {
                         return (
                             // <div column-x>
-                            column
-                                .slice()
-                                .reverse()
-                                .map((elem, indexRow) => {
-                                    return (
-                                        <div
-                                            key={`${indexColumn}${indexRow}`}
-                                            className={`board-circle ${
-                                                elem
-                                                    ? `player-${elem}`
-                                                    : indexColumn ===
-                                                          nextCircleIndex[0] &&
-                                                      indexRow ===
-                                                          nextCircleIndex[1] &&
-                                                      `player-${turn}`
-                                            }
-                                        
-                                        
+                            column.map((elem, indexRow) => {
+                                return (
+                                    <div
+                                        key={`${indexColumn}${indexRow}`}
+                                        className={`board-circle ${
+                                            elem
+                                                ? `player-${elem}`
+                                                : indexColumn ===
+                                                      nextCircleIndex[0] &&
+                                                  indexRow ===
+                                                      nextCircleIndex[1] &&
+                                                  `player-${turn}`
+                                        }
                                         `}
-                                            onMouseEnter={() =>
-                                                handleHoverCircle(indexColumn)
-                                            }
-                                            onClick={() =>
-                                                handleClickCircle(
-                                                    indexColumn,
-                                                    indexRow
-                                                )
-                                            }
-                                        ></div>
-                                    );
-                                })
+                                        onMouseEnter={() =>
+                                            handleHoverCircle(indexColumn)
+                                        }
+                                        onClick={() =>
+                                            handleClickCircle(
+                                                indexColumn,
+                                                indexRow
+                                            )
+                                        }
+                                    ></div>
+                                );
+                            })
                             // </div>
                         );
                         // aca

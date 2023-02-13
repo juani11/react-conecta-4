@@ -1,4 +1,7 @@
-export const thereIsAWinner = (board) => {
+const numberOfColumns = 7;
+const numberOfRows = 6;
+
+const thereIsAWinner = (board) => {
     /*     BOARD EXAMPLE
     const board = [
         ["green", "green", "green", "green", "green", null],
@@ -9,11 +12,12 @@ export const thereIsAWinner = (board) => {
         [null, null, null, null, null, null],
         [null, null, null, null, null, null],
     ]; */
+    const reverseBoard = board.slice().reverse();
     return (
         checkColumn(board) || //Solo hay 3 combinaciones posibles por columna
         checkRow(board) || //Solo hay 3 combinaciones posibles por fila
-        checkDiagonalRight(board.slice().reverse()) || //En los checkDiagonal se manda el board al reves, para chequear(hacer la logica de los for) en el mmismo sentido en el que se muestra visualmente el board
-        checkDiagonalLeft(board.slice().reverse()) //En los checkDiagonal se manda el board al reves, para chequear(hacer la logica de los for) en el mmismo sentido en el que se muestra visualmente el board
+        checkDiagonalRight(board) ||
+        checkDiagonalLeft(board)
     );
 };
 
@@ -80,3 +84,17 @@ const checkDiagonalLeft = (board) => {
     }
     return false;
 };
+
+const findRowIndexOfNextCircleInColumn = (column) => {
+    let rowIndex;
+    //Si la columna todavia no tiene nigun circulo, devuelvo el indice del ultimo elemento de la columna
+    if (column.every((circle) => circle === null)) {
+        rowIndex = numberOfRows - 1;
+    } else {
+        //Si la columna no esta totalmente vacia, (hay al menos un elemento), busco el indice del primero que sea !=null y devuelvo el indice del anterior a ese elemento.
+        rowIndex = column.findIndex((circle) => circle != null) - 1;
+    }
+    return rowIndex;
+};
+
+export { numberOfColumns, findRowIndexOfNextCircleInColumn, thereIsAWinner };
